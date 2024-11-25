@@ -1,0 +1,39 @@
+---
+import { format } from 'date-fns';
+
+interface Props {
+  title: string;
+  excerpt: string;
+  date: string;
+  image: string;
+  href: string;
+  author: string;
+  genre: string;
+}
+
+const { title, excerpt, date, image, href, author, genre } = Astro.props;
+const formattedDate = format(new Date(date), 'MMMM dd, yyyy');
+---
+<article class="relative group">
+  <div class="aspect-[16/9] overflow-hidden rounded-xl">
+    <img 
+      src={image} 
+      alt={title} 
+      class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+    />
+  </div>
+  <div class="mt-6">
+    <div class="flex items-center gap-4 mb-3">
+      <span class="bg-purple-600 text-sm font-semibold px-3 py-1 rounded-full text-white">
+        {genre}
+      </span>
+      <time datetime={date} class="text-sm text-gray-400">{formattedDate}</time>
+      <span class="text-gray-400">•</span>
+      <span class="text-sm text-gray-400">{author}</span>
+    </div>
+    <h2 class="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">
+      <a href={href}>{title}</a>
+    </h2>
+    <p class="text-gray-400 line-clamp-3">{excerpt}</p>
+  </div>
+</article>

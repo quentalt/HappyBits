@@ -1,0 +1,37 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+const articleData = {
+  title: "New Aphex Twin Album Incoming",
+  excerpt: "Electronic music pioneer Richard D. James teases new material after years of silence. The upcoming release promises to blend classic IDM elements with cutting-edge sound design techniques.",
+  date: "2024-04-14",
+  image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80",
+  author: "James Wilson",
+  genre: "IDM",
+  content: `
+    <p>Richard D. James, better known as Aphex Twin, has sent the electronic music world into a frenzy with cryptic teasers suggesting the imminent release of new material. The legendary producer, known for his groundbreaking work in intelligent dance music (IDM), has been relatively quiet since his last major release.</p>
+
+    <h2>New Sound Direction</h2>
+    <p>Sources close to Warp Records suggest that the new album will showcase James's continued evolution as an artist while maintaining the intricate programming and emotional depth that fans have come to expect. The album reportedly features:</p>
+    <ul>
+      <li>Advanced granular synthesis techniques</li>
+      <li>Custom-built software instruments</li>
+      <li>Collaborative elements with AI technology</li>
+      <li>Resampled analog synthesizer experiments</li>
+    </ul>
+
+    <h2>Release Details</h2>
+    <p>While an official release date hasn't been announced, the album is expected to drop in the latter half of 2024. The release will be available in multiple formats, including:</p>
+    <ul>
+      <li>Limited edition vinyl with exclusive artwork</li>
+      <li>Digital download with bonus tracks</li>
+      <li>Special edition featuring unreleased material</li>
+    </ul>
+
+    <h2>Industry Impact</h2>
+    <p>The announcement has already sparked discussions about the current state of electronic music and the continued influence of IDM pioneers. Industry experts anticipate that the release will push boundaries and potentially influence the next generation of electronic music producers.</p>
+  `
+};
+---
+
+<ArticleLayout {...articleData} />

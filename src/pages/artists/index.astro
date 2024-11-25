@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+
+const { data: artists } = await supabase
+  .from('artists')
+  .select('*')
+  .order('name');
+---
+
+<Layout title="Artists">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-black dark:text-white">Featured Artists</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {artists?.map((artist) => (
+        <div class="bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+          <img 
+            src={artist.image || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80'} 
+            alt={artist.name}
+            class="w-full h-64 object-cover"
+          />
+          <div class="p-6">
+            <h2 class="text-2xl font-bold mb-2 text-black dark:text-white">{artist.name}</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">{artist.genre}</p>
+            <p class="text-gray-500 dark:text-gray-400 line-clamp-3">{artist.bio}</p>
+            <a 
+              href={`/artists/${artist.id}`}
+              class="inline-block mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Read More
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

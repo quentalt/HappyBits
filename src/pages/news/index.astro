@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { supabase } from '../../lib/supabase';
+import { SortButton } from '../../components/SortButton';
+
+const { data: articles } = await supabase
+  .from('articles')
+  .select(`
+    *,
+    authors (name),
+    genres (name)
+  `)
+  .order('date', { ascending: false });
+---
+
+<Layout title="Latest News">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-4xl font-bold text-black dark:text-white">Latest News</h1>
+      <div class="flex gap-4">
+        <SortButton client:load label="Date" currentSort="-date" sortKey="date" onSort={(key) => {
+          const newsGrid = document.getElementById('news-grid');
+          if (!newsGrid) return;
+          
+          const articles = Array.from(newsGrid.children);
+          const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
+          
+          articles.sort((a, b) => {
+            const aDate = new Date(a.querySelector('time')?.dateTime || '');
+            const bDate = new Date(b.querySelector('time')?.dateTime || '');
+            return isAscending ? bDate.getTime() - aDate.getTime() : aDate.getTime() - bDate.getTime();
+          });
+          
+          newsGrid.innerHTML = '';
+          articles.forEach(article => newsGrid.appendChild(article));
+          
+          document.querySelector(`[data-sort-key="${key}"]`)?.setAttribute('data-current-sort', isAscending ? `-${key}` : key);
+        }} />
+        <SortButton client:load label="Title" currentSort="" sortKey="title" onSort={(key) => {
+          const newsGrid = document.getElementById('news-grid');
+          if (!newsGrid) return;
+          
+          const articles = Array.from(newsGrid.children);
+          const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
+          
+          articles.sort((a, b) => {
+            const aTitle = a.querySelector('h2')?.textContent || '';
+            const bTitle = b.querySelector('h2')?.textContent || '';
+            return isAscending ? bTitle.localeCompare(aTitle) : aTitle.localeCompare(bTitle);
+          });
+          
+          newsGrid.innerHTML = '';
+          articles.forEach(article => newsGrid.appendChild(article));
+          
+          document.querySelector(`[data-sort-key="${key}"]`)?.setAttribute('data-current-sort', isAscending ? `-${key}` : key);
+        }} />
+        <SortButton client:load label="Genre" currentSort="" sortKey="genre" onSort={(key) => {
+          const newsGrid = document.getElementById('news-grid');
+          if (!newsGrid) return;
+          
+          const articles = Array.from(newsGrid.children);
+          const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
+          
+          articles.sort((a, b) => {
+            const aGenre = a.querySelector('.bg-purple-600')?.textContent?.trim() || '';
+            const bGenre = b.querySelector('.bg-purple-600')?.textContent?.trim() || '';
+            return isAscending ? bGenre.localeCompare(aGenre) : aGenre.localeCompare(bGenre);
+          });
+          
+          newsGrid.innerHTML = '';
+          articles.forEach(article => newsGrid.appendChild(article));
+          
+          document.querySelector(`[data-sort-key="${key}"]`)?.setAttribute('data-current-sort', isAscending ? `-${key}` : key);
+        }} />
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
+      {articles?.map((article) => (
+        <NewsCard 
+          {...article}
+          author={article.authors.name}
+          genre={article.genres.name}
+        />
+      ))}
+    </div>
+  </div>
+</Layout>

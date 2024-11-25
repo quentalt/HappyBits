@@ -1,0 +1,48 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+const articleData = {
+  title: "Detroit Techno Festival Announces 2024 Lineup",
+  excerpt: "Movement Electronic Music Festival reveals star-studded lineup featuring Jeff Mills, Underground Resistance, and Carl Craig. The festival will showcase both Detroit legends and international talents.",
+  date: "2024-04-13",
+  image: "https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&q=80",
+  author: "Sarah Johnson",
+  genre: "Detroit Techno",
+  content: `
+    <p>Movement Electronic Music Festival, Detroit's premier celebration of techno music, has unveiled its highly anticipated lineup for 2024. The festival, taking place over Memorial Day weekend, continues its tradition of bringing together the pioneers of Detroit techno with contemporary electronic music innovators.</p>
+
+    <h2>Headliners</h2>
+    <p>This year's festival features an impressive roster of headlining acts:</p>
+    <ul>
+      <li>Jeff Mills - The Wizard returns with a special 3-hour set</li>
+      <li>Underground Resistance - Rare festival appearance</li>
+      <li>Carl Craig - Celebrating 30 years of Planet E Communications</li>
+      <li>Robert Hood - Minimal Nation live performance</li>
+    </ul>
+
+    <h2>Stage Information</h2>
+    <p>The festival will feature five distinct stages, each with its own musical focus:</p>
+    <ul>
+      <li>Movement Stage - Main stage featuring headline acts</li>
+      <li>Underground Stage - Deep and minimal techno</li>
+      <li>Stargate - Experimental electronic music</li>
+      <li>Pyramid - House and disco</li>
+      <li>Detroit Made - Local talent showcase</li>
+    </ul>
+
+    <h2>Festival Details</h2>
+    <p>Movement 2024 will take place at Hart Plaza in downtown Detroit from May 25-27. The festival will feature:</p>
+    <ul>
+      <li>Over 100 artists across five stages</li>
+      <li>Interactive technology exhibitions</li>
+      <li>Local food vendors and art installations</li>
+      <li>Official afterparties throughout the city</li>
+    </ul>
+
+    <h2>Cultural Impact</h2>
+    <p>Movement continues to be a crucial platform for celebrating Detroit's rich musical heritage while pushing the boundaries of electronic music forward. The festival attracts thousands of visitors from around the world, contributing significantly to the city's cultural and economic vitality.</p>
+  `
+};
+---
+
+<ArticleLayout {...articleData} />

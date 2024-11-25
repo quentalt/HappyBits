@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+import { format } from 'date-fns';
+import { SortButton } from '../../components/SortButton';
+
+const { data: events } = await supabase
+  .from('events')
+  .select('*')
+  .order('date');
+---
+
+<Layout title="Events">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-4xl font-bold text-black dark:text-white">Upcoming Events</h1>
+      <div class="flex gap-4">
+        <SortButton client:load label="Date" currentSort="date" sortKey="date" onSort={(key) => {
+          const eventsGrid = document.getElementById('events-grid');
+          if (!eventsGrid) return;
+          
+          const events = Array.from(eventsGrid.children);
+          const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
+          
+          events.sort((a, b) => {
+            const aDate = new Date(a.querySelector('time')?.dateTime || '');
+            const bDate = new Date(b.querySelector('time')?.dateTime || '');
+            return isAscending ? bDate.getTime() - aDate.getTime() : aDate.getTime() - bDate.getTime();
+          });
+          
+          eventsGrid.innerHTML = '';
+          events.forEach(event => eventsGrid.appendChild(event));
+          
+          document.querySelector(`[data-sort-key="${key}"]`)?.setAttribute('data-current-sort', isAscending ? `-${key}` : key);
+        }} />
+        <SortButton client:load label="Name" currentSort="" sortKey="name" onSort={(key) => {
+          const eventsGrid = document.getElementById('events-grid');
+          if (!eventsGrid) return;
+          
+          const events = Array.from(eventsGrid.children);
+          const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
+          
+          events.sort((a, b) => {
+            const aName = a.querySelector('h2')?.textContent || '';
+            const bName = b.querySelector('h2')?.textContent || '';
+            return isAscending ? bName.localeCompare(aName) : aName.localeCompare(bName);
+          });
+          
+          eventsGrid.innerHTML = '';
+          events.forEach(event => eventsGrid.appendChild(event));
+          
+          document.querySelector(`[data-sort-key="${key}"]`)?.setAttribute('data-current-sort', isAscending ? `-${key}` : key);
+        }} />
+      </div>
+    </div>
+    <div class="grid gap-8" id="events-grid">
+      {events?.map((event) => (
+        <div class="bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+          <div class="md:flex">
+            <div class="md:w-1/3">
+              <img 
+                src={event.image || 'https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&q=80'} 
+                alt={event.name}
+                class="w-full h-64 md:h-full object-cover"
+              />
+            </div>
+            <div class="p-6 md:w-2/3">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                  {event.category}
+                </span>
+                <time datetime={event.date} class="text-gray-500 dark:text-gray-400">
+                  {format(new Date(event.date), 'MMMM dd, yyyy')}
+                </time>
+              </div>
+              <h2 class="text-2xl font-bold mb-4 text-black dark:text-white">{event.name}</h2>
+              <p class="text-gray-600 dark:text-gray-300 mb-4">{event.location}</p>
+              <p class="text-gray-500 dark:text-gray-400 mb-6">{event.description}</p>
+              <a 
+                href={`/events/${event.id}`}
+                class="inline-block px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                Event Details
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,29 @@
+---
+import { ThemeToggle } from './ThemeToggle';
+---
+
+<header class="bg-white dark:bg-zinc-900 text-black dark:text-white p-4 border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-50 backdrop-blur-sm bg-white/80 dark:bg-zinc-900/80">
+  <nav class="container mx-auto flex justify-between items-center">
+    <a href="/" class="text-2xl font-bold hover:text-purple-600 dark:hover:text-purple-400 transition-colors">TechnoPulse</a>
+    <div class="flex items-center gap-6">
+      <ul class="flex gap-6">
+        <li>
+          <a href="/news" class="font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+            News
+          </a>
+        </li>
+        <li>
+          <a href="/artists" class="font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+            Artists
+          </a>
+        </li>
+        <li>
+          <a href="/events" class="font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+            Events
+          </a>
+        </li>
+      </ul>
+      <ThemeToggle client:load />
+    </div>
+  </nav>
+</header>

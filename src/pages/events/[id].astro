@@ -1,0 +1,91 @@
+---
+// Import necessary libraries
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+import { format } from 'date-fns';
+
+// Define the `getStaticPaths` function
+export async function getStaticPaths() {
+  // Fetch all event IDs from the database
+  const { data: events, error } = await supabase
+      .from('events')
+      .select('id');
+
+  if (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+
+  // Map over the IDs to create paths for each event
+  return events.map((event) => ({
+    params: { id: event.id.toString() },
+  }));
+}
+
+// Fetch data for the current event page
+const { id } = Astro.params;
+
+const { data: event } = await supabase
+    .from('events')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+if (!event) {
+  return Astro.redirect('/404');
+}
+
+// Format the date for display
+const formattedDate = format(new Date(event.date), 'MMMM dd, yyyy');
+---
+
+<Layout title={event.name}>
+  <article class="max-w-4xl mx-auto px-4">
+    <div class="mb-8">
+      <img
+          src={event.image || 'https://images.unsplash.com/photo-1574169208507-84376144848b?auto=format&fit=crop&q=80'}
+          alt={event.name}
+          class="w-full aspect-video object-cover rounded-xl"
+      />
+    </div>
+
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <div class="flex items-center gap-4 mb-6">
+                <span class="bg-purple-600 px-3 py-1 rounded-full text-white text-sm font-semibold">
+                    {event.category}
+                </span>
+        <time datetime={event.date} class="text-gray-500 dark:text-gray-400">
+          {formattedDate}
+        </time>
+      </div>
+
+      <h1 class="text-4xl font-bold mb-4 text-black dark:text-white">{event.name}</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">{event.location}</p>
+
+      <div class="mt-8 text-gray-600 dark:text-gray-300">
+        <p class="whitespace-pre-wrap">{event.description}</p>
+      </div>
+
+      <div class="mt-12 grid gap-8">
+        <div class="bg-white dark:bg-zinc-900 rounded-lg p-6">
+          <h2 class="text-2xl font-bold mb-4 text-black dark:text-white">Event Details</h2>
+          <ul class="space-y-4 text-gray-600 dark:text-gray-300">
+            <li><strong>Date:</strong> {formattedDate}</li>
+            <li><strong>Location:</strong> {event.location}</li>
+            <li><strong>Category:</strong> {event.category}</li>
+            {event.lineup && (
+                <li>
+                  <strong>Lineup:</strong>
+                  <ul class="list-disc list-inside mt-2">
+                    {event.lineup.map((artist: string) => (
+                        <li>{artist}</li>
+                    ))}
+                  </ul>
+                </li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

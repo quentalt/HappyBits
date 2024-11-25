@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NewsCard from '../components/NewsCard.astro';
+import FeaturedArticle from '../components/FeaturedArticle.astro';
+import { SearchBar } from '../components/SearchBar';
+import { supabase } from '../lib/supabase';
+
+// Get initial data
+const { data: genres } = await supabase
+  .from('genres')
+  .select('*');
+
+const { data: featuredArticle } = await supabase
+  .from('articles')
+  .select(`
+    *,
+    authors (name),
+    genres (name)
+  `)
+  .eq('is_featured', true)
+  .single();
+
+const { data: latestNews } = await supabase
+  .from('articles')
+  .select(`
+    *,
+    authors (name),
+    genres (name)
+  `)
+  .eq('is_featured', false)
+  .order('date', { ascending: false })
+  .limit(6);
+---
+
+<Layout title="Latest Techno News">
+  <section class="text-center mb-16">
+    <h1 class="text-5xl font-bold mb-4 text-black dark:text-white">TechnoPulse</h1>
+    <p class="text-xl text-gray-600 dark:text-gray-400">Your Daily Beat of Electronic Music News</p>
+  </section>
+
+  <section class="mb-12">
+    <SearchBar client:load genres={genres || []} />
+  </section>
+
+  <section class="mb-20">
+    <h2 class="text-2xl font-bold mb-8 text-black dark:text-white">Featured Story</h2>
+    {featuredArticle && (
+      <FeaturedArticle 
+        {...featuredArticle} 
+        author={featuredArticle.authors.name} 
+        genre={featuredArticle.genres.name} 
+        href={`/article/${featuredArticle.id}`}
+      />
+    )}
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-bold mb-8 text-black dark:text-white">Latest News</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {latestNews?.map(article => (
+        <NewsCard 
+          {...article} 
+          author={article.authors.name}
+          genre={article.genres.name}
+        />
+      ))}
+    </div>
+  </section>
+</Layout>

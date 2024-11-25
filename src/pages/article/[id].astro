@@ -1,0 +1,50 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { supabase } from '../../lib/supabase';
+
+export async function getStaticPaths() {
+    const { data: articles, error } = await supabase.from('articles').select('id');
+
+    if (error) {
+        console.error('Erreur lors de la récupération des articles :', error);
+        return []; // Retourne un tableau vide en cas d'erreur
+    }
+
+    // Transforme les IDs en chemins sous forme de tableau
+    return articles.map((article) => ({
+        params: { id: String(article.id) }, // Chaque ID doit être une chaîne
+    }));
+}
+
+// Récupération des données pour un article spécifique
+const { id } = Astro.params;
+
+const { data: article, error } = await supabase
+    .from('articles')
+    .select(`
+    *,
+    authors (
+      name,
+      bio
+    ),
+    genres (
+      name,
+      description
+    )
+  `)
+    .eq('id', id)
+    .single();
+
+if (!article || error) {
+    return Astro.redirect('/404'); // Redirige vers la page 404 si l'article n'existe pas
+}
+
+const articleData = {
+    ...article,
+    author: article.authors.name,
+    genre: article.genres.name,
+};
+---
+
+<!-- Mise en page de l'article -->
+<ArticleLayout {...articleData} />

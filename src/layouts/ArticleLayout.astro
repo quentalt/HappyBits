@@ -1,0 +1,135 @@
+---
+import Layout from './Layout.astro';
+import { Newsletter } from '../components/Newsletter';
+import { Comments } from '../components/Comments';
+import { format } from 'date-fns';
+import { VideoPlayer } from '../components/VideoPlayer';
+import { ClipboardIcon} from '@heroicons/react/24/outline';
+
+
+
+interface Props {
+  id: number;
+  title: string;
+  excerpt: string;
+  date: string;
+  image: string;
+  author: string;
+  genre: string;
+  content: string;
+  video_url?: string;
+  authors: {
+    bio: string;
+  };
+  genres: {
+    description: string;
+  };
+}
+
+const {
+  id,
+  title,
+  excerpt,
+  date,
+  image,
+  author,
+  genre,
+  content,
+  video_url,
+  authors,
+  genres
+} = Astro.props;
+
+const formattedDate = format(new Date(date), 'MMMM dd, yyyy');
+
+const copyArticleToClipboard = () => {
+  const articleContent = document.querySelector("article").innerText;
+  navigator.clipboard.writeText(articleContent).then(
+      () => {
+        alert("Article copied to clipboard!");
+      },
+      (error) => {
+        alert("Failed to copy article: " + error);
+      }
+  );
+};
+
+---
+
+<Layout title={title}>
+  <article class="max-w-4xl mx-auto">
+    <div class="mb-8">
+      <img src={image} alt={title} class="w-full aspect-video object-cover rounded-xl" />
+    </div>
+
+    {video_url && (
+        <div class="mb-8">
+          <VideoPlayer client:load url={video_url} />
+        </div>
+    )}
+
+    <div class="prose prose-lg max-w-none text-gray-900 mt-12 bg-gray-50 rounded-lg p-6">
+      <div class="flex items-center gap-4 mb-6">
+        <span class="bg-purple-600 px-3 py-1 rounded-full text-white text-sm font-semibold">
+          {genre}
+        </span>
+        <time datetime={date} class="text-gray-600">{formattedDate}</time>
+        <span class="text-gray-600">•</span>
+        <span class="text-gray-600">By {author}</span>
+      </div>
+
+      <h1 class="text-4xl font-bold mb-4 text-gray-900">{title}</h1>
+      <p class="text-xl text-gray-700 mb-8">{excerpt}</p>
+
+      <div class="mt-8">
+        <Fragment set:html={content} />
+      </div>
+    </div>
+
+    <div class="mt-12 bg-gray-50 rounded-lg p-6">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold mb-2 text-gray-900">About the Genre</h3>
+        <p class="text-gray-800">{genres.description}</p>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold mb-2 text-gray-900">About the Author</h3>
+        <p class="text-gray-800">{authors.bio}</p>
+      </div>
+    </div>
+
+    <div class="mt-16 grid md:grid-cols-2 gap-8">
+      <Newsletter client:load />
+
+      <div class="bg-gray-100 p-8 rounded-lg">
+        <h3 class="text-2xl font-bold mb-4 text-gray-900">Share this article</h3>
+        <div class="flex gap-4">
+          <button
+              onClick={copyArticleToClipboard}
+              class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            <span class="flex items-center gap-2">
+              <ClipboardIcon className="w-4 h-4"/>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <Comments client:load articleId={id} />
+  </article>
+</Layout>
+
+<script type="module">
+  // Function to copy the article content to the clipboard
+  const copyArticleToClipboard = () => {
+    const articleContent = document.querySelector("article").innerText;
+    navigator.clipboard.writeText(articleContent).then(
+        () => {
+          alert("Article copied to clipboard!");
+        },
+        (error) => {
+          alert("Failed to copy article: " + error);
+        }
+    );
+  };
+</script>

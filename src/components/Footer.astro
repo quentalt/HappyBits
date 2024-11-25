@@ -1,0 +1,45 @@
+---
+const currentYear = new Date().getFullYear();
+---
+<footer class="bg-gray-100 dark:bg-zinc-900 text-black dark:text-white py-12 mt-20 border-t border-gray-200 dark:border-zinc-800">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-4">TechnoPulse</h3>
+        <p class="text-gray-600 dark:text-gray-400">Your daily source for electronic music culture and news.</p>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="/about" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">About Us</a></li>
+          <li><a href="/contact" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">Contact</a></li>
+          <li><a href="/advertise" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">Advertise</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Categories</h4>
+        <ul class="space-y-2">
+          <li><a href="/news" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">News</a></li>
+          <li><a href="/reviews" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">Reviews</a></li>
+          <li><a href="/interviews" class="text-gray-600 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400">Interviews</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-4">Newsletter</h4>
+        <form class="space-y-4">
+          <input 
+            type="email" 
+            placeholder="Enter your email" 
+            class="w-full px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+          />
+          <button class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition-colors">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 dark:border-zinc-800 mt-8 pt-8 text-center text-gray-600 dark:text-gray-400">
+      <p>&copy; {currentYear} TechnoPulse. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

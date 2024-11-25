@@ -1,0 +1,33 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+const articleData = {
+  title: "Berghain Announces Special 20th Anniversary Event Series",
+  excerpt: "The legendary Berlin club celebrates two decades of techno excellence with a month-long program featuring resident DJs Ben Klock, Marcel Dettmann, and special guests from around the globe.",
+  date: "2024-04-15",
+  image: "https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?auto=format&fit=crop&q=80",
+  author: "Alex Chen",
+  genre: "Industrial Techno",
+  artistId: "BER-20Y",
+  content: `
+    <p>Berghain, Berlin's most iconic techno institution, has unveiled plans for an unprecedented month-long celebration marking its 20th anniversary. The club, housed in a former power plant, has been at the forefront of electronic music culture since its opening in 2004.</p>
+
+    <h2>Special Programming</h2>
+    <p>The anniversary events will feature extended sets from resident DJs who have shaped the club's sound over the past two decades, including:</p>
+    <ul>
+      <li>Ben Klock</li>
+      <li>Marcel Dettmann</li>
+      <li>Steffi</li>
+      <li>Norman Nodge</li>
+    </ul>
+
+    <h2>International Guest Artists</h2>
+    <p>Joining the residents will be a carefully curated selection of international artists who have contributed to Berghain's legacy. The full lineup will be announced in the coming weeks.</p>
+
+    <h2>Historical Impact</h2>
+    <p>Over its 20-year history, Berghain has become more than just a nightclub; it's a cultural institution that has significantly influenced the global techno scene. The anniversary programming aims to celebrate this legacy while looking toward the future of electronic music.</p>
+  `
+};
+---
+
+<ArticleLayout {...articleData} />
