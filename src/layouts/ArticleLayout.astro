@@ -4,9 +4,7 @@ import { Newsletter } from '../components/Newsletter';
 import { Comments } from '../components/Comments';
 import { format } from 'date-fns';
 import { VideoPlayer } from '../components/VideoPlayer';
-import { ClipboardIcon} from '@heroicons/react/24/outline';
-
-
+import { ShareArticle } from '../components/ShareArticle';
 
 interface Props {
   id: number;
@@ -24,6 +22,8 @@ interface Props {
   genres: {
     description: string;
   };
+  artist_info?: string;
+  external_links?: string[];
 }
 
 const {
@@ -37,23 +37,12 @@ const {
   content,
   video_url,
   authors,
-  genres
+  genres,
+  artist_info,
+  external_links = []
 } = Astro.props;
 
 const formattedDate = format(new Date(date), 'MMMM dd, yyyy');
-
-const copyArticleToClipboard = () => {
-  const articleContent = document.querySelector("article").innerText;
-  navigator.clipboard.writeText(articleContent).then(
-      () => {
-        alert("Article copied to clipboard!");
-      },
-      (error) => {
-        alert("Failed to copy article: " + error);
-      }
-  );
-};
-
 ---
 
 <Layout title={title}>
@@ -68,68 +57,63 @@ const copyArticleToClipboard = () => {
         </div>
     )}
 
-    <div class="prose prose-lg max-w-none text-gray-900 mt-12 bg-gray-50 rounded-lg p-6">
+    <div class="prose prose-invert prose-lg max-w-none">
       <div class="flex items-center gap-4 mb-6">
         <span class="bg-purple-600 px-3 py-1 rounded-full text-white text-sm font-semibold">
           {genre}
         </span>
-        <time datetime={date} class="text-gray-600">{formattedDate}</time>
-        <span class="text-gray-600">•</span>
-        <span class="text-gray-600">By {author}</span>
+        <time datetime={date} class="text-gray-400">{formattedDate}</time>
+        <span class="text-gray-400">•</span>
+        <span class="text-gray-400">By {author}</span>
       </div>
 
-      <h1 class="text-4xl font-bold mb-4 text-gray-900">{title}</h1>
-      <p class="text-xl text-gray-700 mb-8">{excerpt}</p>
+      <h1 class="text-4xl text-gray-600 font-bold mb-4">{title}</h1>
+      <p class="text-xl text-gray-600 mb-8">{excerpt}</p>
 
-      <div class="mt-8">
+      <div class="text-gray-600 mt-8">
         <Fragment set:html={content} />
       </div>
+
+      {artist_info && (
+          <div class="mt-8 bg-zinc-900 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">Artist Information</h3>
+            <p class="text-gray-300">{artist_info}</p>
+          </div>
+      )}
+
+      {external_links?.length > 0 && (
+          <div class="mt-8 bg-zinc-900 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4">Related Links</h3>
+            <ul class="list-disc list-inside space-y-2">
+              {external_links.map((link) => (
+                  <li>
+                    <a href={link} target="_blank" rel="noopener noreferrer"
+                       class="text-purple-400 hover:text-purple-300 transition-colors">
+                      {link}
+                    </a>
+                  </li>
+              ))}
+            </ul>
+          </div>
+      )}
     </div>
 
-    <div class="mt-12 bg-gray-50 rounded-lg p-6">
+    <div class="mt-12 bg-zinc-900 rounded-lg p-6">
       <div class="mb-6">
-        <h3 class="text-xl font-bold mb-2 text-gray-900">About the Genre</h3>
-        <p class="text-gray-800">{genres.description}</p>
+        <h3 class="text-xl text-gray-300 font-bold mb-2">About the Genre</h3>
+        <p class="text-gray-300">{genres.description}</p>
       </div>
       <div>
-        <h3 class="text-xl font-bold mb-2 text-gray-900">About the Author</h3>
-        <p class="text-gray-800">{authors.bio}</p>
+        <h3 class="text-xl text-gray-300 font-bold mb-2">About the Author</h3>
+        <p class="text-gray-300">{authors.bio}</p>
       </div>
     </div>
 
     <div class="mt-16 grid md:grid-cols-2 gap-8">
       <Newsletter client:load />
-
-      <div class="bg-gray-100 p-8 rounded-lg">
-        <h3 class="text-2xl font-bold mb-4 text-gray-900">Share this article</h3>
-        <div class="flex gap-4">
-          <button
-              onClick={copyArticleToClipboard}
-              class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            <span class="flex items-center gap-2">
-              <ClipboardIcon className="w-4 h-4"/>
-            </span>
-          </button>
-        </div>
-      </div>
+      <ShareArticle client:load title={title} />
     </div>
 
     <Comments client:load articleId={id} />
   </article>
 </Layout>
-
-<script type="module">
-  // Function to copy the article content to the clipboard
-  const copyArticleToClipboard = () => {
-    const articleContent = document.querySelector("article").innerText;
-    navigator.clipboard.writeText(articleContent).then(
-        () => {
-          alert("Article copied to clipboard!");
-        },
-        (error) => {
-          alert("Failed to copy article: " + error);
-        }
-    );
-  };
-</script>
