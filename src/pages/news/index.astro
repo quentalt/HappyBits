@@ -2,55 +2,54 @@
 import Layout from '../../layouts/Layout.astro';
 import NewsCard from '../../components/NewsCard.astro';
 import { supabase } from '../../lib/supabase';
-import { SortButton } from '../../components/SortButton';
 
-const { data: articles } = await supabase
+// Convertir l'URL en objet URL
+const url = new URL(Astro.request.url);
+
+// Récupérer les paramètres de tri depuis l'URL
+const sortKey = 'date'; // On trie toujours par "date"
+const sortOrder = url.searchParams.get('order') === 'asc'; // Ascendant si "order=asc"
+
+// Charger les articles triés
+const { data: articles, error } = await supabase
     .from('articles')
     .select(`
     *,
     authors (name),
     genres (name)
   `)
-    .order('date', { ascending: false });
+    .order(sortKey, { ascending: sortOrder });
+
+if (error) {
+    console.error('Erreur Supabase:', error);
+}
+
+// Définir l'URL pour inverser l'ordre de tri
+const nextOrder = sortOrder ? 'desc' : 'asc';
+const nextOrderIcon = sortOrder ? '↓' : '↑'; // Icône à afficher
 ---
 
 <Layout title="Latest News">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex justify-between items-center mb-8">
-      <h1 class="text-4xl font-bold text-black dark:text-white">Latest News</h1>
-      <div class="flex gap-4">
-        <SortButton
-            client:load
-            label="Date"
-            currentSort="-date"
-            sortKey="date"
-            onSort={(key) => {
-              const newsGrid = document.getElementById('news-grid');
-              if (!newsGrid) return;
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold text-black dark:text-white">Latest News</h1>
+            <a
+                    href={`?order=${nextOrder}`}
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors"
+            >
+                <span>Trier</span> <span>{nextOrderIcon}</span>
+            </a>
+        </div>
 
-              const articles = Array.from(newsGrid.children);
-              const isAscending = document.querySelector(`[data-sort-key="${key}"]`)?.getAttribute('data-current-sort') === key;
-
-              articles.sort((a, b) => {
-                const aDate = new Date(a.querySelector('time')?.dateTime || '');
-                const bDate = new Date(b.querySelector('time')?.dateTime || '');
-                return isAscending ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime();
-              });
-
-              newsGrid.innerHTML = '';
-              articles.forEach(article => newsGrid.appendChild(article));
-            }}
-        />
-      </div>
+        <!-- Grille des articles -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
+            {articles?.map((article) => (
+                    <NewsCard
+                        {...article}
+                        author={article.authors.name}
+                        genre={article.genres.name}
+                    />
+            ))}
+        </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
-      {articles?.map((article) => (
-          <NewsCard
-              {...article}
-              author={article.authors.name}
-              genre={article.genres.name}
-          />
-      ))}
-    </div>
-  </div>
 </Layout>
